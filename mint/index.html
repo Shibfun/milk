@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WoofingMilk Mint</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #ffffff;
+            color: #333333;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #333333;
+        }
+        .connect-section button {
+            padding: 12px;
+            background: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            transition: background 0.2s;
+            margin-bottom: 10px;
+        }
+        .connect-section button:hover { background: #0056b3; }
+        .status {
+            font-size: 0.9em;
+            color: #555555;
+            text-align: center;
+            margin-bottom: 15px;
+            word-break: break-all;
+        }
+        .input-box {
+            margin-bottom: 15px;
+        }
+        .input-box label {
+            display: block;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+            color: #333333;
+        }
+        .custom-select {
+            position: relative;
+            width: 100%;
+        }
+        .select-selected {
+            padding: 10px;
+            background: #ffffff;
+            border: 1px solid #cccccc;
+            border-radius: 5px;
+            color: #333333;
+            font-size: 1em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        .select-selected img {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+        }
+        .select-items {
+            position: absolute;
+            background: #ffffff;
+            border: 1px solid #cccccc;
+            border-radius: 5px;
+            width: 100%;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 99;
+            display: none;
+        }
+        .select-items div {
+            padding: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        .select-items div img {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+        }
+        .select-items div:hover {
+            background: #f0f0f0;
+        }
+        .select-items.show {
+            display: block;
+        }
+        .action-button {
+            padding: 12px;
+            background: #28a745;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            transition: background 0.2s;
+            position: relative;
+        }
+        .action-button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+        .action-button:hover:not(:disabled) { background: #218838; }
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #fff;
+            border-top: 2px solid #28a745;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 5px;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @media (max-width: 480px) {
+            body { padding: 10px; }
+            .container { padding: 15px; }
+            .header { font-size: 1.3em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">WoofingMilk Mint</div>
+        <div class="connect-section">
+            <button id="connectWalletButton">Connect Wallet</button>
+            <div id="networkStatus" class="status">Click to connect...</div>
+        </div>
+        <div class="input-box">
+            <label>Select Whitelisted Token</label>
+            <div class="custom-select">
+                <div class="select-selected">
+                    <img src="" alt="" style="display: none;">
+                    Select a token
+                </div>
+                <div class="select-items">
+                    <div data-value="0xe9Cb2D7ADC24Fc59FE00D6C0A0669BDF16805Fe0" data-logo="https://woofswap.finance/image/tokens/feed.png">
+                        <img src="https://woofswap.finance/image/tokens/feed.png" alt="FEED"> FEED
+                    </div>
+                    <div data-value="0x61CFA29261d8151D39244b8FfCf8DFd2f9DF3839" data-logo="https://woofswap.finance/image/tokens/ChikaLogo.png">
+                        <img src="https://woofswap.finance/image/tokens/ChikaLogo.png" alt="CHIKA"> CHIKA
+                    </div>
+                    <div data-value="0xB820c8a74c8E4059661460C414821bC5820470D8" data-logo="https://woofswap.finance/image/tokens/toys.png">
+                        <img src="https://woofswap.finance/image/tokens/toys.png" alt="TOYS"> TOYS
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="action-button" id="mintButton" disabled>Mint MOMO</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.0/dist/web3.min.js"></script>
+    <script>
+        const momongaAddress = '0x23E2B4B5d33A2cF70f2d60C95E90AF7cC9Bf8Bf2';
+        const momongaAbi = [
+            {
+                "inputs": [{"internalType": "address", "name": "targetToken", "type": "address"}],
+                "name": "mint",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {"indexed": true, "internalType": "address", "name": "token", "type": "address"},
+                    {"indexed": true, "internalType": "address", "name": "recipient", "type": "address"},
+                    {"indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256"}
+                ],
+                "name": "Airdrop",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {"indexed": false, "internalType": "string", "name": "reason", "type": "string"}
+                ],
+                "name": "MintFailed",
+                "type": "event"
+            }
+        ];
+
+        const chains = {
+            Shibarium: {
+                chainId: 109,
+                chainName: 'Shibarium',
+                rpcUrl: 'https://rpc.shibariumchain.com',
+                blockExplorer: 'https://shibariumscan.io'
+            }
+        };
+
+        let web3, account, momongaContract;
+        let selectedToken = '';
+
+        function initializeCustomSelect() {
+            const select = document.querySelector('.custom-select');
+            const selected = select.querySelector('.select-selected');
+            const items = select.querySelector('.select-items');
+            const options = items.querySelectorAll('div');
+
+            selected.addEventListener('click', () => {
+                items.classList.toggle('show');
+            });
+
+            options.forEach(option => {
+                option.addEventListener('click', () => {
+                    selected.innerHTML = option.innerHTML;
+                    selectedToken = option.getAttribute('data-value');
+                    items.classList.remove('show');
+                    updateMintButton();
+                });
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!select.contains(e.target)) {
+                    items.classList.remove('show');
+                }
+            });
+        }
+
+        function updateMintButton() {
+            const mintButton = document.getElementById('mintButton');
+            mintButton.disabled = !selectedToken || !account;
+        }
+
+        async function initializeWeb3() {
+            if (window.ethereum) {
+                web3 = new Web3(window.ethereum);
+                try {
+                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    account = (await web3.eth.getAccounts())[0];
+                    document.getElementById('connectWalletButton').innerText = `Connected: ${account.slice(0, 6)}...${account.slice(-4)}`;
+                    await switchNetwork('Shibarium');
+                    await initializeContracts();
+                    document.getElementById('networkStatus').innerText = `Connected to Shibarium`;
+                    updateMintButton();
+                } catch (error) {
+                    document.getElementById('networkStatus').innerText = 'Failed to connect wallet: ' + (error.message || 'Unknown error');
+                }
+            } else {
+                document.getElementById('networkStatus').innerText = 'Please install MetaMask';
+            }
+        }
+
+        async function switchNetwork(chain) {
+            const chainConfig = chains[chain];
+            try {
+                await window.ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: `0x${chainConfig.chainId.toString(16)}` }]
+                });
+            } catch (switchError) {
+                if (switchError.code === 4902) {
+                    await window.ethereum.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [{
+                            chainId: `0x${chainConfig.chainId.toString(16)}`,
+                            chainName: chainConfig.chainName,
+                            rpcUrls: [chainConfig.rpcUrl],
+                            nativeCurrency: { name: 'BONE', symbol: 'BONE', decimals: 18 },
+                            blockExplorerUrls: [chainConfig.blockExplorer]
+                        }]
+                    });
+                } else {
+                    throw switchError;
+                }
+            }
+        }
+
+        async function initializeContracts() {
+            momongaContract = new web3.eth.Contract(momongaAbi, momongaAddress);
+        }
+
+        async function waitForTransaction(txHash) {
+            let receipt = null;
+            const maxAttempts = 60;
+            let attempts = 0;
+            while (attempts < maxAttempts) {
+                receipt = await web3.eth.getTransactionReceipt(txHash);
+                if (receipt) {
+                    if (receipt.status) return receipt;
+                    throw new Error(`Transaction ${txHash} failed`);
+                }
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                attempts++;
+            }
+            throw new Error(`Transaction ${txHash} not confirmed after ${maxAttempts} attempts`);
+        }
+
+        async function mintMomo() {
+            const status = document.getElementById('networkStatus');
+            const mintButton = document.getElementById('mintButton');
+            const tokenAddress = selectedToken;
+
+            if (!web3 || !account) {
+                status.innerText = "Please connect wallet first.";
+                return;
+            }
+
+            if (!tokenAddress) {
+                status.innerText = "Please select a token.";
+                return;
+            }
+
+            try {
+                mintButton.disabled = true;
+                mintButton.innerHTML = 'Minting... <span class="spinner"></span>';
+                status.innerText = `Minting MOMO with token: ${tokenAddress}`;
+
+                const currentGasPrice = await web3.eth.getGasPrice();
+                const adjustedGasPrice = web3.utils.toBN(currentGasPrice).mul(web3.utils.toBN(11)).div(web3.utils.toBN(10));
+                const tx = await momongaContract.methods.mint(tokenAddress).send({
+                    from: account,
+                    gas: web3.utils.toHex(10000000),
+                    gasPrice: web3.utils.toHex(adjustedGasPrice)
+                });
+
+                status.innerText = `Transaction submitted. Hash: ${tx.transactionHash}`;
+                await waitForTransaction(tx.transactionHash);
+
+                status.innerText = "MOMO minted successfully!";
+            } catch (error) {
+                let errorMessage = error.message || 'Unknown error';
+                if (error.message.includes('revert')) {
+                    errorMessage = error.message.split('revert')[1]?.trim() || 'Revert reason unknown';
+                }
+                if (error.code === 4001) {
+                    status.innerText = "Transaction canceled by user.";
+                } else {
+                    status.innerText = `Mint failed: ${errorMessage}`;
+                    console.error(error);
+                }
+            } finally {
+                mintButton.disabled = false;
+                mintButton.innerHTML = 'Mint MOMO';
+                updateMintButton();
+            }
+        }
+
+        document.getElementById('connectWalletButton').addEventListener('click', initializeWeb3);
+        document.getElementById('mintButton').addEventListener('click', mintMomo);
+        initializeCustomSelect();
+    </script>
+</body>
+</html>
